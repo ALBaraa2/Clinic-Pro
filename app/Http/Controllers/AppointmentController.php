@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use App\Http\Resources\AppointmentResource;
 
 class AppointmentController extends Controller
 {
@@ -15,8 +16,8 @@ class AppointmentController extends Controller
         $user = $request->user();
         $appointments = Appointment::query();
 
-        if ($user->employee()->position === 'doctor') {
-            $appointments->where('doctor_id', $user->employee()->id);
+        if ($user->employee->position === 'doctor') {
+            $appointments->where('doctor_id', $user->id);
         }
 
         if ($request->has('from')) {
@@ -39,7 +40,7 @@ class AppointmentController extends Controller
             $appointments->where('priority', $request->query('priority'));
         }
 
-        return $appointments->get();
+        return AppointmentResource::collection($appointments->get());
     }
 
     /**
@@ -61,15 +62,15 @@ class AppointmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Appointment $appointment)
     {
-        //
+        return new AppointmentResource($appointment);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Appointment $appointment)
     {
         //
     }
@@ -77,7 +78,7 @@ class AppointmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Appointment $appointment)
     {
         //
     }
@@ -85,7 +86,7 @@ class AppointmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Appointment $appointment)
     {
         //
     }
